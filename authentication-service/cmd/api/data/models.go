@@ -10,8 +10,11 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// How long should I go before it's considered to be a failed operation?
 const dbTimeout = time.Second * 3
 
+// package variable
+// It points where our database pool for connections to Posgres will live.
 var db *sql.DB
 
 // New is the function used to create an instance of the data package. It returns the type
