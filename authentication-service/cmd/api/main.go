@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 )
 
 const webPort = "80"
@@ -57,3 +58,16 @@ func openDB(dsn string) (*sql.DB, error) {
 // Now we are going to add Posgres to our Docker composed.yml file.
 // We need to make sure that it's available before we return the database connection,
 // because this service might start out before the database does.
+
+func connectTDB() *sql.DB {
+
+	dsn := os.Getenv("DSN")
+
+	for {
+		connection, err := openDB(dsn)
+		if err != nil {
+			log.Println("Postgres not yet ready ...")
+
+		}
+	}
+}
