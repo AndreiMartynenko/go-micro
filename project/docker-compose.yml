@@ -15,7 +15,7 @@ services:
 
 
   postgres:
-    image: 'postgres: 14.0'
+    image: 'postgres: 16.1'
     ports:
       - "5432:5432"
     restart: always
@@ -23,4 +23,9 @@ services:
       mode: replicated
       replicas: 1
     environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: users
+    volumes:
+      - ./db-data/postgres/:/var/lib/postgresql/data/
       
