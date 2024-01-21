@@ -8,6 +8,10 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	_ "github.com/jackc/pgconn"
+	_ "github.com/jackc/pgx/v4"
+	_ "github.com/jackc/pgx/v4/stdlib"
 )
 
 const webPort = "80"
@@ -23,6 +27,10 @@ func main() {
 	log.Println("Starting authentication service")
 
 	// connect to DB
+	conn := connectTDB()
+	if conn == nil {
+		log.Panic("Can't connect to Postgres!")
+	}
 
 	// set up config
 	app := Config{}
