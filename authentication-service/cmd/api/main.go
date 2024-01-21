@@ -54,4 +54,6 @@ func openDB(dsn string) (*sql.DB, error) {
 	return db, nil
 }
 
-// Now we are going to add Posgres to our Docker composed.yml file and we need to make
+// Now we are going to add Posgres to our Docker composed.yml file.
+// We need to make sure that it's available before we return the database connection,
+// because this service might start out before the database does.
