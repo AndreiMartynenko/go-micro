@@ -7,6 +7,10 @@ import (
 	"os/user"
 )
 
+//This microservice authentication is going to listen a post request that has a JSON body with a username and password
+//Then it will use our data.models the user type in there. Check to see if the password and username supplied match
+//what we have in our database and we'll send some response back.
+
 func (app *Config) Authenticate(w http.ResponseWriter, r *http.Request) {
 	var requestPayload struct {
 		Email    string `json:"email"`
