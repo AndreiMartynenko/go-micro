@@ -17,3 +17,7 @@ func (app *Config) Broker(w http.ResponseWriter, r *http.Request) {
 	// w.WriteHeader(http.StatusAccepted)
 	// w.Write(out)
 }
+
+func (app *Config) HandleSubmission(w http.ResponseWriter, r *http.Request) {
+
+}
