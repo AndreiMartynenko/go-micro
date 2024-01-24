@@ -32,6 +32,7 @@ func main() {
 
 }
 
+// func to connect the mongo
 func connectToMongo() (*mongo.Client, error) {
 	//create connection option
 	clientOptions := options.Client().ApplyURI(mongoURL)
