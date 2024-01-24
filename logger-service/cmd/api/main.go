@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -30,23 +31,59 @@ func main() {
 	}
 	client = mongoClient
 
+	// create a context in order to disconnect Mongo
+
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+
+	//close connection
+	defer func() {
+		if err = client.Disconnect(ctx); err != nil {
+			panic(err)
+		}
+	}()
+
 }
 
 // func to connect the mongo
 func connectToMongo() (*mongo.Client, error) {
-	//create connection option
+	/*
+		Create Connection Options:
+		Utilizes the options package to create connection options.
+		Applies the MongoDB connection URI (mongoURL variable) to the options.
+	*/
 	clientOptions := options.Client().ApplyURI(mongoURL)
+
+	/*
+		Sets the authentication credentials (username and password) for MongoDB.
+	*/
 	clientOptions.SetAuth(options.Credential{
 		Username: "admin",
 		Password: "password",
 	})
 
-	// connect
+	/*
+		Establish Connection:
+		Uses the mongo.Connect function to establish a connection to MongoDB.
+		Uses the provided context (context.TODO()).
+	*/
 	c, err := mongo.Connect(context.TODO(), clientOptions)
+
+	/*
+		Handle Connection Errors:
+		If an error occurs during the connection process,
+		logs the error and returns nil client and the encountered error.
+	*/
 	if err != nil {
 		log.Println("Error connecting:", err)
 		return nil, err
 	}
+	/*
+			Return MongoDB Client:
+
+		If the connection is successful, returns the MongoDB client (c) and nil error.
+
+	*/
 
 	return c, nil
 
