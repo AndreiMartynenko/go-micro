@@ -9,12 +9,14 @@ import (
 )
 
 const (
+	//because we're running a Docker the port would be 80
 	webPort  = "80"
 	rpcPort  = "5001"
 	mongoURL = "mongodb://mongo:27017"
 	gRpcPort = "50001"
 )
 
+// mongo client as a package level variable
 var client *mongo.Client
 
 type Config struct {
