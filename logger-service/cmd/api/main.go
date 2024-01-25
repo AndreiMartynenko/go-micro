@@ -58,6 +58,11 @@ func (app *Config) serve() {
 		Addr:    fmt.Sprintf(":%s", webPort),
 		Handler: app.routes(),
 	}
+
+	err := srv.ListenAndServe()
+	if err != nil {
+		log.Panic()
+	}
 }
 
 // func to connect the mongo
