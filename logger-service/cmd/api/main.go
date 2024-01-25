@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"net/http"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -21,6 +23,7 @@ const (
 var client *mongo.Client
 
 type Config struct {
+	Models data.Models
 }
 
 func main() {
@@ -43,6 +46,17 @@ func main() {
 		}
 	}()
 
+	app := Config{
+		Models: data.New(client),
+	}
+
+}
+
+func (app *Config) serve() {
+	//Starts a web server
+	srv := &http.Server{
+		Addr: fmt.Sprintf(":%s", webPort),
+	}
 }
 
 // func to connect the mongo
