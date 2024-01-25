@@ -55,7 +55,8 @@ func main() {
 func (app *Config) serve() {
 	//Starts a web server
 	srv := &http.Server{
-		Addr: fmt.Sprintf(":%s", webPort),
+		Addr:    fmt.Sprintf(":%s", webPort),
+		Handler: app.routes(),
 	}
 }
 
