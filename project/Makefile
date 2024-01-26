@@ -31,7 +31,7 @@ build_broker:
 
 ## build_looger: builds the logger service as a linux executable
 build_logger:
-	@echo "Building looger binary..."
+	@echo "Building logger binary..."
 	cd ../logger-service && env GOOS=linux CGO_ENABLED=0 go build -o ${LOGGER_BINARY} ./cmd/api
 	@echo "Done!"
 
