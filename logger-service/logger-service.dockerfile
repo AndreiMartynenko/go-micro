@@ -5,4 +5,4 @@ RUN mkdir /app
 
 COPY loggerServiceApp /app
 
-CMD [ "/app/authApp" ]
+CMD [ "/app/loggerServiceApp" ]
