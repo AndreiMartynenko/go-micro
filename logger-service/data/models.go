@@ -1,4 +1,4 @@
-package main
+package data
 
 import (
 	"context"
@@ -8,7 +8,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"gopkg.in/mgo.v2/bson"
 )
 
 var client *mongo.Client
@@ -50,8 +49,6 @@ func (l *LogEntry) Insert(entry LogEntry) error {
 	return nil
 }
 
-//
-
 func (l *LogEntry) All() ([]*LogEntry, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
@@ -66,7 +63,6 @@ func (l *LogEntry) All() ([]*LogEntry, error) {
 		log.Println("Finding all docs error:", err)
 		return nil, err
 	}
-
 	defer cursor.Close(ctx)
 
 	var logs []*LogEntry
@@ -84,5 +80,4 @@ func (l *LogEntry) All() ([]*LogEntry, error) {
 	}
 
 	return logs, nil
-
 }

@@ -1,6 +1,9 @@
 package main
 
-import "net/http"
+import (
+	"log-service/data"
+	"net/http"
+)
 
 type JSONPayload struct {
 	Name string `json:"name"`
