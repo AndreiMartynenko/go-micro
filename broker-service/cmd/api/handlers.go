@@ -49,7 +49,8 @@ func (app *Config) HandleSubmission(w http.ResponseWriter, r *http.Request) {
 	switch requestPayload.Action {
 	case "auth":
 		app.authenticate(w, requestPayload.Auth)
-
+	case "log":
+		app.logItem(w, requestPayload.Log)
 	default:
 		//app.errorJSON(w, errors.New("unknown action"))
 		app.errorJSON(w, errors.New("unknown action: "+requestPayload.Action))
@@ -58,6 +59,30 @@ func (app *Config) HandleSubmission(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func (app *Config) logItem(w http.ResponseWriter, entry LogPayload) {
+	jsonData, _ := json.MarshalIndent(entry, "", "\t")
+
+	logServiceURL := "http://logger-service/log"
+
+	request, err := http.NewRequest("POST", logServiceURL, bytes.NewBuffer(jsonData))
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
+	request.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+
+	response, err := client.Do(request)
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+	defer response.Body.Close()
+}
+
+// authenticate calls the authentication microservice and sends back the appropriate respone
 func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
 
 	//create some json we'll send to the auth microservice
