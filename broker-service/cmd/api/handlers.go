@@ -45,7 +45,8 @@ func (app *Config) HandleSubmission(w http.ResponseWriter, r *http.Request) {
 		app.authenticate(w, requestPayload.Auth)
 
 	default:
-		app.errorJSON(w, errors.New("unknown action"))
+		//app.errorJSON(w, errors.New("unknown action"))
+		app.errorJSON(w, errors.New("unknown action: "+requestPayload.Action))
 
 	}
 
@@ -85,8 +86,13 @@ func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
 	var jsonFromService jsonResponse
 
 	// decode the json from the auth service
-	err = json.NewDecoder(response.Body).Decode(&jsonFromService)
-	if err != nil {
+	// err = json.NewDecoder(response.Body).Decode(&jsonFromService)
+	// if err != nil {
+	// 	app.errorJSON(w, err)
+	// 	return
+	// }
+
+	if err := json.NewDecoder(response.Body).Decode(&jsonFromService); err != nil {
 		app.errorJSON(w, err)
 		return
 	}
