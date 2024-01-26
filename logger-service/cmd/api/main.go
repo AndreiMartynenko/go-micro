@@ -14,10 +14,10 @@ import (
 
 const (
 	//because we're running a Docker the port would be 80
-	webPort = "80"
-	rpcPort = "5001"
-	//mongoURL = "mongodb://mongo:27017"
-	mongoURL = "mongodb://localhost:27017"
+	webPort  = "80"
+	rpcPort  = "5001"
+	mongoURL = "mongodb://mongo:27017"
+	//mongoURL = "mongodb://localhost:27017"
 	gRpcPort = "50001"
 )
 
@@ -67,6 +67,7 @@ func main() {
 
 }
 
+/*
 func (app *Config) serve() {
 	//Starts a web server
 	srv := &http.Server{
@@ -79,6 +80,7 @@ func (app *Config) serve() {
 		log.Panic()
 	}
 }
+*/
 
 // func to connect the mongo
 func connectToMongo() (*mongo.Client, error) {
