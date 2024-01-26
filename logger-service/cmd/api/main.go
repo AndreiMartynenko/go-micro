@@ -50,6 +50,9 @@ func main() {
 		Models: data.New(client),
 	}
 
+	//start web server
+	go app.serve()
+
 }
 
 func (app *Config) serve() {

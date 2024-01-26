@@ -3,14 +3,13 @@ module log-service
 go 1.21.1
 
 require (
+	github.com/go-chi/chi/v5 v5.0.11
+	github.com/go-chi/cors v1.2.1
 	go.mongodb.org/mongo-driver v1.13.1
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22
 )
 
 require (
-	github.com/go-chi/chi v1.5.5 // indirect
-	github.com/go-chi/chi/v5 v5.0.11 // indirect
-	github.com/go-chi/cors v1.2.1 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe // indirect
