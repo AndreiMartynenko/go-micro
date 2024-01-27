@@ -43,7 +43,12 @@ func (app *Config) Authenticate(w http.ResponseWriter, r *http.Request) {
 	//log authentication
 	//before this payload JSON response is sent back I want to log the request
 
-	//if it doesn't work above, otherwise
+	err = app.logRequest(w, "authentication", fmt.Sprintf("%s logged in", user.Email))
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
 	payload := jsonResponse{
 		Error:   false,
 		Message: fmt.Sprintf("Logged in user %s", user.Email),
