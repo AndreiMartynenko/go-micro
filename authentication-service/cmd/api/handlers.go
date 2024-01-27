@@ -38,7 +38,9 @@ func (app *Config) Authenticate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//otherwise
+	//log authentication before this payload JSON response is sent back I want to log the request
+
+	//if it doesn't work above, otherwise
 	payload := jsonResponse{
 		Error:   false,
 		Message: fmt.Sprintf("Logged in user %s", user.Email),
