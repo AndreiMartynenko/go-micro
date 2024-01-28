@@ -83,4 +83,15 @@ func (m *Mail) inlineCSS(s string) (string, error) {
 		KeepBangImportant: true,
 	}
 
+	preMailer, err := premailer.NewPremailerFromString(s, &options)
+	if err != nil {
+		return "", err
+	}
+
+	html, err := preMailer.Transform()
+	if err != nil {
+		return "", err
+	}
+	return html
+
 }
