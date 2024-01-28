@@ -2,9 +2,10 @@ package main
 
 import (
 	"bytes"
-	"text/template"
+	"html/template"
 
 	"github.com/vanng822/go-premailer/premailer"
+	mail "github.com/xhit/go-simple-mail"
 )
 
 // set up instance of the mailer with the appropriate configuration
@@ -60,6 +61,10 @@ func (m *Mail) SendSMTPMessage(msg Message) error {
 		return err
 	}
 
+	//create server
+
+	server := mail.NewSMTPClient
+
 }
 
 func (m *Mail) buildHTMLMessage(msg Message) (string, error) {
@@ -82,6 +87,24 @@ func (m *Mail) buildHTMLMessage(msg Message) (string, error) {
 	}
 
 	return formattedMessage, nil
+}
+
+func (m *Mail) buildPlainTextMessage(msg Message) (string, error) {
+	templateToRender := "./templates/mail.plain.html"
+
+	t, err := template.New("email-plain").ParseFiles(templateToRender)
+	if err != nil {
+		return "", err
+	}
+	var tpl bytes.Buffer
+	if err = t.ExecuteTemplate(&tpl, "body", msg.DataMap); err != nil {
+		return "", err
+
+	}
+
+	plainMessage := tpl.String()
+
+	return plainMessage, nil
 }
 
 func (m *Mail) inlineCSS(s string) (string, error) {
