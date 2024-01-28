@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"html/template"
+	"time"
 
 	"github.com/vanng822/go-premailer/premailer"
 	mail "github.com/xhit/go-simple-mail"
@@ -63,7 +64,15 @@ func (m *Mail) SendSMTPMessage(msg Message) error {
 
 	//create server
 
-	server := mail.NewSMTPClient
+	server := mail.NewSMTPClient()
+	server.Host = m.Host
+	server.Port = m.Port
+	server.Username = m.Username
+	server.Password = m.Password
+	server.Encryption = m.getEncryption(m.Encryption)
+	server.KeepAlive = false
+	server.ConnectTimeout = 10 * time.Second
+	server.SendTimeout = 10 * time.Second
 
 }
 
@@ -123,6 +132,23 @@ func (m *Mail) inlineCSS(s string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return html
+	return html, nil
+
+}
+
+//get Encryption
+//mail.Encryption from the mail package
+
+func (m *Mail) getEncryption(s string) mail.Encryption {
+	switch s {
+	case "tls":
+		return mail.EncryptionSTARTTLS
+	case "ssl":
+		return mail.EncryptionSSLTLS
+	case "none", "":
+		return mail.EncryptionNone
+	default:
+		return mail.EncryptionSTARTTLS
+	}
 
 }
