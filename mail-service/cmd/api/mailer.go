@@ -74,6 +74,37 @@ func (m *Mail) SendSMTPMessage(msg Message) error {
 	server.ConnectTimeout = 10 * time.Second
 	server.SendTimeout = 10 * time.Second
 
+	//connect to the host
+
+	smtpClient, err := server.Connect()
+	if err != nil {
+		return err
+	}
+
+	email := mail.NewMSG()
+	email.SetFrom(msg.From).
+		AddTo(msg.To).
+		SetSubject(msg.Subject)
+
+		// this gives me a plain twxt version of the message
+	email.SetBody(mail.TextPlain, plainMessage)
+
+	email.AddAlternative(mail.TextHTML, formattedMessage)
+
+	//add attachments
+
+	if len(msg.Attachments) > 0 {
+		for _, x := range msg.Attachments {
+			email.AddAttachment(x)
+		}
+	}
+
+	err = email.Send(smtpClient)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (m *Mail) buildHTMLMessage(msg Message) (string, error) {
