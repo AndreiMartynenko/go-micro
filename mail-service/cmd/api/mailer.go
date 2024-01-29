@@ -46,7 +46,7 @@ func (m *Mail) SendSMTPMessage(msg Message) error {
 
 	//2 temlates
 
-	data := map[string]any{
+	data := map[string]interface{}{
 		"message": msg.Data,
 	}
 
