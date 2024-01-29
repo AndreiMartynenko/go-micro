@@ -13,6 +13,13 @@ type RequestPayload struct {
 	Log    LogPayload  `json:"log,omitempty"`
 }
 
+type MailPayload struct {
+	From    string `json:"from"`
+	To      string `json:"to"`
+	Subject string `json:"subject"`
+	Message string `json:"message"`
+}
+
 type AuthPayload struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
@@ -38,6 +45,8 @@ func (app *Config) Broker(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *Config) HandleSubmission(w http.ResponseWriter, r *http.Request) {
+	//Handle submission actually expects to receive some
+	//kind of payload and that's described up here
 	var requestPayload RequestPayload
 
 	err := app.readJSON(w, r, &requestPayload)
@@ -80,6 +89,18 @@ func (app *Config) logItem(w http.ResponseWriter, entry LogPayload) {
 		return
 	}
 	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusAccepted {
+		app.errorJSON(w, err)
+		return
+	}
+
+	var payload jsonResponse
+	payload.Error = false
+	payload.Message = "logged"
+
+	app.writeJSON(w, http.StatusAccepted, payload)
+
 }
 
 // authenticate calls the authentication microservice and sends back the appropriate respone
