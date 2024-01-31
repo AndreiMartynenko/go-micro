@@ -6,7 +6,8 @@ import (
 
 // Consumer used for receiving events from the queue
 type Consumer struct {
-	conn      *amqp.Connection
+	conn *amqp.Connection
+	//what queue we are going to be dealing with
 	queueName string
 }
 
@@ -14,13 +15,24 @@ func NewConsumer(conn *amqp.Connection) (Consumer, error) {
 	consumer := Consumer{
 		conn: conn,
 	}
-
+	//before I return anything I have to set this up
+	err := consumer.setup()
+	if err != nil {
+		//if it's an err I just return an empty consumer and err.
+		return Consumer{}, err
+	}
+	// if it worker I return consumer and nil
+	return consumer, nil
 }
+
+// set up this consumer. We're going to open up a channel and declare an exchange specific to AMQP protocol
 
 func (consumer *Consumer) setup() error {
 	channel, err := consumer.conn.Channel()
 	if err != nil {
 		return nil
 	}
-	return
+	//We want to return the result of declaring and echange because that's what we need to do here
+	// We have to get a channel and exchange
+	return declareExchange(channel)
 }
