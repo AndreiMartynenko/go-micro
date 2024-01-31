@@ -4,6 +4,7 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
+// Consumer used for receiving events from the queue
 type Consumer struct {
 	conn      *amqp.Connection
 	queueName string
