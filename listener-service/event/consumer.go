@@ -36,3 +36,21 @@ func (consumer *Consumer) setup() error {
 	// We have to get a channel and exchange
 	return declareExchange(channel)
 }
+
+//Pushing events to RabbitMQ
+
+type Payload struct {
+	Name string `json:"name"`
+	Data string `json:"data"`
+}
+
+//func that Listens to the queue and listens for specific topics
+
+func (consumer *Consumer) Listen(topics []string) error {
+	ch, err := consumer.conn.Channel()
+	if err != nil {
+		return err
+	}
+	defer ch.Close()
+
+}
