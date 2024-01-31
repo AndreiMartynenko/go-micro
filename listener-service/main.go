@@ -16,11 +16,13 @@ func main() {
 
 	//try to connect to rabbitmq
 	rabbitConn, err := connect()
+
 	if err != nil {
 		log.Println(err)
 		os.Exit(1)
 	}
 	defer rabbitConn.Close()
+	fmt.Println("Connected to RabbitMQ")
 
 	//start listening for messages
 	//What happens. This appli. is not going to periodically connect to the queue and listen
