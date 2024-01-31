@@ -60,7 +60,7 @@ func connect() (*amqp.Connection, error) {
 			fmt.Println(err)
 			return nil, err
 		}
-
+		// if we haven't tried at least five times or at most five times, then I'll back off that variable
 		backOff = time.Duration(math.Pow(float64(counts), 2)) * time.Second
 		log.Println("backing off...")
 		time.Sleep(backOff)
