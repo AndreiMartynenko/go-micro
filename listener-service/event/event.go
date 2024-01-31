@@ -5,7 +5,7 @@ import (
 )
 
 func declareExchange(ch *amqp.Channel) error {
-	return ch.EchangeDeclare(
+	return ch.ExchangeDeclare(
 		"logs_topic", // name
 		"topic",      //type
 		true,         //durable
