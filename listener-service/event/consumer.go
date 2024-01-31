@@ -1,6 +1,10 @@
 package event
 
 import (
+	"encoding/json"
+	"fmt"
+	"log"
+
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -59,5 +63,82 @@ func (consumer *Consumer) Listen(topics []string) error {
 
 	//Now we need to get a random queue
 	//Common way of working with RabbitMQ
+
+	q, err := declareRandomQueue(ch)
+	if err != nil {
+		return err
+	}
+
+	for _, s := range topics {
+		//bind our channel to each of these topics
+		ch.QueueBind(
+			q.Name,
+			s,
+			"logs_topic",
+			false,
+			nil,
+		)
+		// inside this loop check the error
+		if err != nil {
+			return err
+		}
+	}
+	//look for messages
+	//1. q.Name - what to consume
+	//2. "" - consumer
+	//3. autoacknowledge - true
+	//4. is it exclusive - false
+	//5. is it no local(internal) - false
+	//6. no wait - false
+	//7.
+	messages, err := ch.Consume(q.Name, "", true, false, false, false, nil)
+	if err != nil {
+		return err
+	}
+
+	// I want consume all of the things that come from RabbitMQ until I exit
+	// declare a channel
+	forever := make(chan bool)
+	//keeps running on own goroutine
+	go func() {
+		for d := range messages {
+			var payload Payload
+			//ignore the error
+			//I want to read my JSON in that variable
+			// current iteration of our messages the Body Unmarshalled into payload
+			_ = json.Unmarshal(d.Body, &payload)
+
+			go handlePayload(payload)
+		}
+	}()
+
+	fmt.Printf("Waiting for message on [Exchange, Queue] [logs_topic, %s]\n", q.Name)
+	<-forever
+
+	return nil
+}
+
+func handlePayload(payload Payload) {
+	switch payload.Name {
+	case "log", "event":
+		// log whatever we get
+		err := logEvent(payload)
+		if err != nil {
+			log.Println(err)
+		}
+	case "auth":
+		//authenticate
+
+		// you can have as many cases as you want, as long as you write the logic
+	default:
+		err := logEvent(payload)
+		if err != nil {
+			log.Println(err)
+		}
+
+	}
+}
+
+func logEvent(entry Payload) error {
 
 }
