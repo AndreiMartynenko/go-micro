@@ -47,10 +47,17 @@ type Payload struct {
 //func that Listens to the queue and listens for specific topics
 
 func (consumer *Consumer) Listen(topics []string) error {
+	//
 	ch, err := consumer.conn.Channel()
+	// if we can't get the channel
 	if err != nil {
 		return err
 	}
+	// we have a channel and we want to close it when we done with it
+	//otherwise resource leak
 	defer ch.Close()
+
+	//Now we need to get a random queue
+	//Common way of working with RabbitMQ
 
 }
