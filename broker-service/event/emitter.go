@@ -31,4 +31,38 @@ func (e *Emitter) Push(event string, severity string) error {
 
 	log.Println("Pushing to channel")
 
+	//publish it
+
+	err = channel.Publish(
+		"logs_topic",
+		severity,
+		false,
+		false,
+		amqp.Publishing{
+			ContentType: "text/plain",
+			Body:        []byte(event),
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
+func newEventEmitter(conn *amqp.Connection) (Emitter, error) {
+	emitter := Emitter{
+		connection: conn,
+	}
+
+	err := emitter.setup()
+	if err != nil {
+		return Emitter{}, err
+	}
+
+	//if we pass that wwe return emitter and nil
+
+	return emitter, nil
+
 }
