@@ -27,13 +27,16 @@ func main() {
 	log.Println("Starting authentication service")
 
 	// connect to DB
-	conn := connectTDB()
+	conn := connectToDB()
 	if conn == nil {
 		log.Panic("Can't connect to Postgres!")
 	}
 
 	// set up config
-	app := Config{}
+	app := Config{
+		DB:     conn,
+		Models: data.New(conn),
+	}
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%s", webPort),
@@ -41,19 +44,15 @@ func main() {
 	}
 
 	err := srv.ListenAndServe()
-
 	if err != nil {
 		log.Panic(err)
-
 	}
-
 }
 
 // Creating a connection to DB
 
 func openDB(dsn string) (*sql.DB, error) {
 	db, err := sql.Open("pgx", dsn)
-
 	if err != nil {
 		return nil, err
 	}
@@ -70,8 +69,7 @@ func openDB(dsn string) (*sql.DB, error) {
 // We need to make sure that it's available before we return the database connection,
 // because this service might start out before the database does.
 
-func connectTDB() *sql.DB {
-
+func connectToDB() *sql.DB {
 	dsn := os.Getenv("DSN")
 
 	for {
@@ -89,7 +87,7 @@ func connectTDB() *sql.DB {
 			return nil
 		}
 
-		log.Println("Backing off for two seconds ...")
+		log.Println("Backing off for two seconds....")
 		time.Sleep(2 * time.Second)
 		continue
 	}
