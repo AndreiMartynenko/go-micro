@@ -78,7 +78,7 @@ func (app *Config) rpcListen() error {
 	//those are populated when I call right from the standard library net.Listen
 	//we're listening for TCP connections. TCP as a string
 	//use format as printf to build a string
-	//the string I want to build is listen on all IP addresses, 0.0.0.0 colon and then a placeholder which is a string
+	//the string I want to build is listen on all IP addresses, 0.0.0.0 and then a placeholder which is a string
 	listen, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%s", rpcPort))
 
 	if err != nil {
