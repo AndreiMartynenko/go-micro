@@ -19,7 +19,8 @@ type RPCPayload struct {
 }
 
 // Then we declare, well, in our case, one function that has
-// the receiver pointer to our PC server.
+// the receiver pointer to our RPCServer.
+// And that requires a payload of some sort.
 func (r *RPCServer) LogInfo(payload RPCPayload, resp *string) error {
 	collection := client.Database("logs").Collection("logs")
 	_, err := collection.InsertOne(context.TODO(), data.LogEntry{
