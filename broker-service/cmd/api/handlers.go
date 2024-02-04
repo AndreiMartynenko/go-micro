@@ -275,15 +275,19 @@ func (app *Config) logItemViaRPC(w http.ResponseWriter, l LogPayload) {
 	// So now I have my data, my payload, I'm going to push and I'm going to get some kind of result back
 	var result string
 	// And here I tell it exactly what I want to call.
-	//And it's going to be our RPC server, which is the type that's created on the server end,
+	//And it's going to be our RPC server, which is the type that's created on the serverend,
 	//and then the name of the function I want to call. it's called logInfo
-	// And of course that means that any method I want to expose to our PC on the server end must be exported.
+	// And of course that means that any method I want to expose to our RPC on the serverend must be exported.
+	//it has to start with a capital letter or it's just not going to work.
+	//The second parameter I'm going to pass it is my data which I just created is called RPC payload
+	//And the last thing of course is the response from the server and that's a reference to the variable called result
 	err = client.Call("RPCServer.LogInfo", rpcPayload, &result)
 	if err != nil {
 		app.errorJSON(w, err)
 		return
 	}
-
+//And finally, I can actually write some JSON back to the end user.
+//So if everything went well, if I got past this, then I'm all set to give my response.
 	payload := jsonResponse{
 		Error:   false,
 		Message: result,
