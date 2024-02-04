@@ -3,7 +3,7 @@ BROKER_BINARY=brokerApp
 AUTH_BINARY=authApp
 LOGGER_BINARY=loggerServiceApp
 MAIL_BINARY=mailerApp
-LISTENER_APP=listenerApp
+LISTENER_BINARY=listenerApp
 
 ## up: starts all containers in the background without forcing build
 up:
