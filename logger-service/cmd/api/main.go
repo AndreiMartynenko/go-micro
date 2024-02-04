@@ -86,7 +86,7 @@ func (app *Config) rpcListen() error {
 	}
 
 	defer listen.Close()
-
+	//we just have a loop that executes forever
 	for {
 		rpcConn, err := listen.Accept()
 		if err != nil {
