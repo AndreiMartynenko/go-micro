@@ -265,12 +265,14 @@ func (app *Config) logItemViaRPC(w http.ResponseWriter, l LogPayload) {
 		app.errorJSON(w, err)
 		return
 	}
-
+	// But if I have that client I need to create a payload
+	// You need to create a type that exactly matches the one that the remote our RPC server expects to get.
+	//Lets create a struct outside this func.
 	rpcPayload := RPCPayload{
 		Name: l.Name,
 		Data: l.Data,
 	}
-
+	// So now I have my data, my payload, I'm going to push and I'm going to get some kind of result back
 	var result string
 	err = client.Call("RPCServer.LogInfo", rpcPayload, &result)
 	if err != nil {
