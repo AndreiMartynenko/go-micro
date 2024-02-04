@@ -18,6 +18,8 @@ type RPCPayload struct {
 	Data string
 }
 
+// Then we declare, well, in our case, one function that has
+// the receiver pointer to our PC server.
 func (r *RPCServer) LogInfo(payload RPCPayload, resp *string) error {
 	collection := client.Database("logs").Collection("logs")
 	_, err := collection.InsertOne(context.TODO(), data.LogEntry{
