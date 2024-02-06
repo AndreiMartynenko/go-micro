@@ -6,6 +6,7 @@ import (
 	"log"
 	"log-service/data"
 	"log-service/logs"
+	"net"
 
 	"google.golang.org/grpc"
 )
@@ -41,7 +42,7 @@ func (l *LogServer) WriteLog(ctx context.Context, req *logs.LogRequest) (*logs.L
 
 // create listener
 func (app *Config) gRPCListen() {
-	lis, err := net.listen("tpc", fmt.Sprintf(":%s", gRpcPort))
+	lis, err := net.Listen("tpc", fmt.Sprintf(":%s", gRpcPort))
 	if err != nil {
 		log.Fatalf("Failed to listen for gRPC: %v", err)
 
