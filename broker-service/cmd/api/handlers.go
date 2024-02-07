@@ -329,6 +329,7 @@ func (app *Config) LogViaGRPC(w http.ResponseWriter, r *http.Request) {
 	c := logs.NewLogServiceClient(conn)
 	//now we need a context
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	//if we run out of time, we cancel
 	defer cancel()
 
 	_, err = c.WriteLog(ctx, &logs.LogRequest{
@@ -337,4 +338,9 @@ func (app *Config) LogViaGRPC(w http.ResponseWriter, r *http.Request) {
 			Data: requestPayload.Log.Data,
 		},
 	})
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
 }
