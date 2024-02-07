@@ -15,6 +15,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+// RequestPayload describes the JSON that this service accepts as an HTTP Post request
 type RequestPayload struct {
 	Action string      `json:"action"`
 	Auth   AuthPayload `json:"auth,omitempty"` // Will omit it if it's not there
@@ -22,6 +23,7 @@ type RequestPayload struct {
 	Mail   MailPayload `json:"mail,omitempty"`
 }
 
+// MailPayload is the embedded type (in RequestPayload) that describes an email message to be sent
 type MailPayload struct {
 	From    string `json:"from"`
 	To      string `json:"to"`
@@ -29,16 +31,19 @@ type MailPayload struct {
 	Message string `json:"message"`
 }
 
+// AuthPayload is the embedded type (in RequestPayload) that describes an authentication request
 type AuthPayload struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
+// LogPayload is the embedded type (in RequestPayload) that describes a request to log something
 type LogPayload struct {
 	Name string `json:"name"`
 	Data string `json:"data"`
 }
 
+// Broker is a test handler, just to make sure we can hit the broker from a web client
 func (app *Config) Broker(w http.ResponseWriter, r *http.Request) {
 	payload := jsonResponse{
 		Error:   false,
@@ -53,6 +58,8 @@ func (app *Config) Broker(w http.ResponseWriter, r *http.Request) {
 	// w.Write(out)
 }
 
+// HandleSubmission is the main point of entry into the broker. It accepts a JSON
+// payload and performs an action based on the value of "action" in that JSON.
 func (app *Config) HandleSubmission(w http.ResponseWriter, r *http.Request) {
 	//Handle submission actually expects to receive some
 	//kind of payload and that's described up here
@@ -76,51 +83,14 @@ func (app *Config) HandleSubmission(w http.ResponseWriter, r *http.Request) {
 	case "mail":
 		app.sendMail(w, requestPayload.Mail)
 	default:
-		//app.errorJSON(w, errors.New("unknown action"))
-		app.errorJSON(w, errors.New("unknown action: "+requestPayload.Action))
+		app.errorJSON(w, errors.New("unknown action"))
+		// app.errorJSON(w, errors.New("unknown action: " +requestPayload.Action))
 
 	}
 
 }
 
-func (app *Config) sendMail(w http.ResponseWriter, msg MailPayload) {
-	jsonData, _ := json.MarshalIndent(msg, "", "\t")
-
-	//call the mail service
-	mailServiceURL := "http://mailer-service/send"
-
-	//post to mail service
-	request, err := http.NewRequest("POST", mailServiceURL, bytes.NewBuffer(jsonData))
-	if err != nil {
-		app.errorJSON(w, err)
-		return
-	}
-
-	request.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-	response, err := client.Do(request)
-	if err != nil {
-		app.errorJSON(w, err)
-		return
-	}
-	defer response.Body.Close()
-
-	//make sure we get back the right status code
-	if response.StatusCode != http.StatusAccepted {
-		app.errorJSON(w, errors.New("error calling mail service"))
-		return
-	}
-
-	//send back json
-	var payload jsonResponse
-	payload.Error = false
-	payload.Message = "Message sent to " + msg.To
-
-	app.writeJSON(w, http.StatusAccepted, payload)
-
-}
-
+// logItem logs an item by making an HTTP Post request with a JSON payload, to the logger microservice
 func (app *Config) logItem(w http.ResponseWriter, entry LogPayload) {
 	jsonData, _ := json.MarshalIndent(entry, "", "\t")
 
@@ -213,6 +183,45 @@ func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
 	payload.Data = jsonFromService.Data
 
 	app.writeJSON(w, http.StatusAccepted, payload)
+}
+
+// sendMail sends email by calling the mail microservice
+func (app *Config) sendMail(w http.ResponseWriter, msg MailPayload) {
+	jsonData, _ := json.MarshalIndent(msg, "", "\t")
+
+	// call the mail service
+	mailServiceURL := "http://mailer-service/send"
+
+	// post to mail service
+	request, err := http.NewRequest("POST", mailServiceURL, bytes.NewBuffer(jsonData))
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
+	request.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	response, err := client.Do(request)
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+	defer response.Body.Close()
+
+	// make sure we get back the right status code
+	if response.StatusCode != http.StatusAccepted {
+		app.errorJSON(w, errors.New("error calling mail service"))
+		return
+	}
+
+	// send back json
+	var payload jsonResponse
+	payload.Error = false
+	payload.Message = "Message sent to " + msg.To
+
+	app.writeJSON(w, http.StatusAccepted, payload)
+
 }
 
 // login an item by emitting an event to RabbitMQ
