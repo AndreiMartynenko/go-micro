@@ -332,7 +332,10 @@ func (app *Config) LogViaGRPC(w http.ResponseWriter, r *http.Request) {
 	//if we run out of time, we cancel
 	defer cancel()
 
+	//Next, call WriteLog
+	//logs.LogRequest was define in protofile
 	_, err = c.WriteLog(ctx, &logs.LogRequest{
+		//it has refrence to logs.Log
 		LogEntry: &logs.Log{
 			Name: requestPayload.Log.Name,
 			Data: requestPayload.Log.Data,
