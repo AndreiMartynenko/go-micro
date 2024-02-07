@@ -28,6 +28,12 @@
         href="javascript:void(0);"
         >Test Mail</a
       >
+      <a
+      id="logGBtn"
+      class="btn btn-outline-secondary"
+      href="javascript:void(0);"
+      >Test gRPC log</a
+    >
 
       <div
         id="output"
@@ -66,8 +72,20 @@
   let sent = document.getElementById("payload");
   let recevied = document.getElementById("received");
   let mailBtn = document.getElementById("mailBtn");
+  let logGBtn = document.getElementById("logGBtn");
 
   //listener
+
+  logGBtn.addEventListener("click", function(){
+    const payload = {
+      action: "gRPC log",
+      log: {
+        name: "event",
+        data: "Some kind of gRPC data",
+      }
+
+    }
+  })
 
   mailBtn.addEventListener("click", function () {
     const payload = {
