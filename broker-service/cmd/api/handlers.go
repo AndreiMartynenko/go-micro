@@ -225,6 +225,7 @@ func (app *Config) sendMail(w http.ResponseWriter, msg MailPayload) {
 }
 
 // login an item by emitting an event to RabbitMQ
+// logEventViaRabbit logs an event using the logger-service. It makes the call by pushing the data to RabbitMQ.
 func (app *Config) logEventViaRabbit(w http.ResponseWriter, l LogPayload) {
 	err := app.pushToQueue(l.Name, l.Data)
 	if err != nil {
@@ -240,7 +241,7 @@ func (app *Config) logEventViaRabbit(w http.ResponseWriter, l LogPayload) {
 
 }
 
-//push to a queue
+// pushToQueue pushes a message into RabbitMQ
 
 func (app *Config) pushToQueue(name, msg string) error {
 
@@ -273,6 +274,7 @@ type RPCPayload struct {
 	Data string
 }
 
+// logItemViaRPC logs an item by making an RPC call to the logger microservice
 func (app *Config) logItemViaRPC(w http.ResponseWriter, l LogPayload) {
 	// I specify in here the name of the microservice from my Docker compose yml, logger-service
 	client, err := rpc.Dial("tcp", "logger-service:5001")
