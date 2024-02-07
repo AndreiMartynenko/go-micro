@@ -7,6 +7,9 @@ import (
 	"errors"
 	"net/http"
 	"net/rpc"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 type RequestPayload struct {
@@ -286,8 +289,8 @@ func (app *Config) logItemViaRPC(w http.ResponseWriter, l LogPayload) {
 		app.errorJSON(w, err)
 		return
 	}
-//And finally, I can actually write some JSON back to the end user.
-//So if everything went well, if I got past this, then I'm all set to give my response.
+	//And finally, I can actually write some JSON back to the end user.
+	//So if everything went well, if I got past this, then I'm all set to give my response.
 	payload := jsonResponse{
 		Error:   false,
 		Message: result,
@@ -295,4 +298,27 @@ func (app *Config) logItemViaRPC(w http.ResponseWriter, l LogPayload) {
 
 	app.writeJSON(w, http.StatusAccepted, payload)
 
+}
+
+func (app *Config) LogViaGRPC(w http.ResponseWriter, r *http.Request) {
+	//this handler receives a json payload
+	var requestPayload RequestPayload
+	// read my json payload
+	err := app.readJSON(w, r, &requestPayload)
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
+	//connect to our server from grpc package
+	//port 50001
+	// we have to have valid credantials to connect.
+	// We don't need credantials because we're running everything in it's own Docker cluster
+	// but we still need to pass them. grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock()
+	conn, err := grpc.Dial("logger-service:50001", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+	defer conn.Close()
 }
