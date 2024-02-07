@@ -78,7 +78,7 @@
 
   logGBtn.addEventListener("click", function(){
     const payload = {
-      action: "gRPC log",
+      action: "log",
       log: {
         name: "event",
         data: "Some kind of gRPC data",
@@ -93,7 +93,7 @@
       headers: headers,
     };
 // add route /log-grpc
-    fetch("http:\/\/localhost:8080/log-grpc", body)
+    fetch("http:\/\/localhost:8080/handle/log-grpc", body)
       .then((response) => response.json())
       .then((data) => {
         sent.innerHTML = JSON.stringify(payload, undefined, 4);
